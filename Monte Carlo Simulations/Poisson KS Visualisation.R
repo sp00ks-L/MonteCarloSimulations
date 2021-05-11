@@ -6,9 +6,6 @@
 if (!exists("poisson_generator", mode = "function")) source("Sussex R/Final Code/Poisson/poisson_generator.R")
 
 library("ggplot2")
-# Extra imports for plot font, not required
-# library(extrafont)
-# loadfonts(device = "win")
 
 # N is relatively small to exacerbate and difference between the 2 ECDFs
 N <- 150
@@ -54,24 +51,23 @@ ggplot(inbuilt_data, aes(x, colour = "R Poisson Generator")) +
   geom_line(data = ks_data, aes(x = xpair, y = ypair, colour = "KS Stat"), size = 0.5, lineend = "round", linetype = "dashed") +
   # This sets the color of the KS line and the 2 ECDFs
   scale_colour_manual(name = NULL, values = c('black', '#4c72b0', '#c44e52')) +
-  labs(title = "A Visualisation of the KS Statistic", x = "X", y = "Pr(X <= x)", subtitle = "Illustrating the maximum distance between 2 ECDFs")
-# Add line below to alter font of plot
-# theme(text = element_text(size = 13, family = "CM Sans CE"))
+  labs(title = "A Visualisation of the KS Statistic", x = "X", y = "Pr(X <= x)", subtitle = "Illustrating the maximum distance between 2 ECDFs") +
+  theme(text = element_text(size = 18, family = "serif"))
 
 ###############
 # File Output #
 ###############
 
-# FILENAME <- "KS_test.pdf"
-# PATH <- "C:/Users/Luke/Sussex Code/Sussex R/Poisson Tests/Plot Images/PDFS/"
+# FILENAME <- "KS_test.png"
+# PATH <- "C:/Users/Luke/Sussex Code/Sussex R/Poisson Tests/Plot Images/PNGs/"
 # ggsave(
 #   FILENAME,
 #   plot = last_plot(),
-#   device = "pdf",
+#   device = "png",
 #   path = PATH,
 #   scale = 1,
 #   width = NA,
 #   height = NA,
 #   units = c("in", "cm", "mm"),
-#   dpi = 300
+#   dpi = 600
 # )
