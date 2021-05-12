@@ -3,8 +3,9 @@
 # Created by: Luke
 # Created on: 01/04/2021
 
-if (!exists("poisson_generator", mode = "function")) source("Sussex R/Final Code/Poisson/poisson_generator.R")
+# Originally implemented when I was exploring the KS test.
 
+if (!exists("poisson_generator", mode = "function")) source("poisson_generator.R")
 library("ggplot2")
 
 # N is relatively small to exacerbate and difference between the 2 ECDFs
