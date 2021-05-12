@@ -12,9 +12,16 @@ get_d_val <- function(alpha, n) {
 }
 
 KStest <- function(N, sample, reference, alpha) {
-  # result <- ks.test(sample, reference)
-  # Use the KSgeneral implementation for discrete KS test
-  # It is quite slow for very large sample sizes
+  #' Discrete Kolmogorov-Smirnov Test
+  #' @description Performs the Kolmogorov-Smirnov test for a discrete distribution using
+  #' the R package KSgeneral
+  #' @param N The size of the sample
+  #' @param sample Your observed / generated distribution
+  #' @param reference The theoretical distribution
+  #' @param alpha The confidence level for calulcation of the D-statistic
+  #' @output None - prints test result to console
+  #' @details This is quite slow when the sample size is larger ~100k and upwards
+
   result <- KSgeneral::disc_ks_test(sample, ecdf(reference), exact=TRUE)
   critical_d_val <- get_d_val(alpha, N)
   cat("Critical D value:\t", round(critical_d_val, 4), "\n")
