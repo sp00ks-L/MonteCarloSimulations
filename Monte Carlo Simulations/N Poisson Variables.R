@@ -5,15 +5,16 @@
 # Created by: Luke
 # Created on: 01/05/2021
 
-if (!exists("poisson_MCMC_sampler", mode = "function")) source("Sussex R/Final Code/Poisson/Poisson MH_MCMC Sampler.R")
+if (!exists("poisson_MCMC_sampler", mode = "function")) source("Sussex R/Final Code/Submission Code/Poisson MH_MCMC Sampler.R")
 library("ggplot2")
 
 N <- 1000
 lambda <- 3
 num_of_variables <- 10
 
-target2 <- function(x, lambda) {
-  # The theoretical PMF for the addition of 10 Poisson random variables
+theoretical_pmf <- function(x, lambda) {
+  # The theoretical PMF for the addition of N Poisson random variables
+  # N given by the variable 'num_of_variables'
   new_lambda <- 0
   for (i in 1:num_of_variables) {
     new_lambda <- new_lambda + lambda
@@ -21,28 +22,34 @@ target2 <- function(x, lambda) {
   return(exp(x * log(new_lambda) - new_lambda - lgamma(x + 1)))
 }
 
-target <- function(x, lambda) {
+pois_pmf <- function(x, lambda) {
+  # Computationally stable variation of the Poisson PMF
+  # https://en.wikipedia.org/wiki/Poisson_distribution#Computational_methods
   return(exp(x * log(lambda) - lambda - lgamma(x + 1)))
 }
 
 theoretical_cdf <- function(x, lambda) {
-  # The theoretical CDF for the addition of 10 poisson random variables
+  # The theoretical CDF for the addition of N poisson random variables
   # In essence, this is just the sum of the PMFs
   result <- 0
   for (i in 0:x) {
-    result <- result + target2(i, lambda)
+    result <- result + theoretical_pmf(i, lambda)
   }
   return(result)
 }
 
+# Where Pois(lam) + Pois(lam) = Pois(2*lam)  -->> Pois(N*lam)
 new_lambda <- num_of_variables * lambda
 X <- rep(0, N)
+# Runs my MCMC sampler of Pois(lambda) N times, summing each iteration
+# This was more stable than running extremely high values of lambda
 for (i in 1:num_of_variables) {
-  X <- X + poisson_MCMC_sampler(N, lambda, 0, 0, target)
+  X <- X + poisson_MCMC_sampler(N, lambda, 0, 0, pois_pmf)
 }
 
+# Finding range to calculate the theoretical CDF. I have done max(X) + lambda to extend the plot horizontally (purely visual)
 k <- min(X):max(X) + lambda
-theo_pdf <- target2(k, lambda)
+theo_pdf <- theoretical_pmf(k, lambda)
 my_cdf <- 0
 for (i in seq_along(k)) {
   my_cdf[i] <- theoretical_cdf(i, lambda)
@@ -50,6 +57,7 @@ for (i in seq_along(k)) {
 
 # Use this to extract the fd breaks
 h <- hist(X, breaks = "fd", plot = FALSE)
+# GGPLOT requires data in dataframe
 sim_data <- data.frame(my_pois = X)
 line_data <- data.frame(xs = k, ys = exp(k * log(new_lambda) - new_lambda - lgamma(k + 1)))
 cdf_data <- data.frame(cdf = my_cdf)
@@ -62,7 +70,6 @@ cdf_data <- data.frame(cdf = my_cdf)
 #   labs(title = title, x = "X", y = "Density") +
 #   scale_x_continuous(breaks = seq(0, 65, 5)) +
 #   theme(text = element_text(size = 18, family = "serif"))
-
 
 
 # Highlighted code below is for plotting the ECDF of my sample vs the theoretical CDF for my 10 Poisson variables
