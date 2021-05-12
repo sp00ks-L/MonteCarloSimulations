@@ -4,16 +4,19 @@
 # Created by: Luke
 # Created on: 01/04/2021
 
-if (!exists("KStest", mode = "function")) source("Sussex R/Final Code/Poisson/Kolmogorov-Smirnov Test.R")
-if (!exists("poisson_generator", mode = "function")) source("Sussex R/Final Code/Poisson/poisson_generator.R")
-if (!exists("chisq_test", mode = "function")) source("C:\\Users\\Luke\\Sussex Code\\Sussex R\\Final Code\\Poisson\\Chi_Squared_Test.R")
+# You will have to change the paths in order to correctly execute the script
 
+# This is the optional KS test function that I created
+# if (!exists("KStest", mode = "function")) source("Kolmogorov-Smirnov Test.R")
+
+if (!exists("poisson_generator", mode = "function")) source("Sussex R/Final Code/Submission Code/poisson_generator.R")
+if (!exists("chisq_test", mode = "function")) source("Sussex R/Final Code/Submission Code/Chi_Squared_Test.R")
 library("ggplot2")
 library("tictoc")
 
 
-N <- 30000
-lambda <- 340
+N <- 100000
+lambda <- 500
 
 tic() # this times the execution of my poisson generator
 X <- poisson_generator(N, lambda)
@@ -41,15 +44,13 @@ ggplot(sim_data, aes(x = my_pois)) +
   labs(title = title, x = "X", y = "Density") +
   theme(text = element_text(size = 18, family = "serif")) +
   # Will need to adjust the below scale depending on the value of lambda
-  # scale_x_continuous(breaks = seq(0, 70, 10))
-  scale_x_continuous(breaks = seq(400, 600, 25))
-
-
+  scale_x_continuous(breaks = seq(0, 70, 10))
 # scale_x_continuous(breaks = seq(400, 600, 25))
 
 # This is a seperate function / file that tests my generator and its goodness-of-fit using KS + Chi-squared
-KStest(N, X, inbuilt_X, 0.025)
-chisq_test(X, lambda = lambda)
+chisq_test(X, theoretical_lambda = lambda)
+# KStest(N, X, inbuilt_X, 0.05) <- this is the optional KS test
+
 
 ###############
 # File Output #
